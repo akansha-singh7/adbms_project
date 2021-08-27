@@ -2,7 +2,7 @@ var express=require("express");
 var bodyParser=require("body-parser");
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/tutorialsPoint');
+mongoose.connect('mongodb://localhost:27017/UserDetails');
 var db=mongoose.connection;
 db.on('error', console.log.bind(console, "connection error"));
 db.once('open', function(callback){
@@ -33,6 +33,27 @@ app.post('/sign_up', function(req,res){
       console.log("Record inserted Successfully");
    });
    return res.redirect('success.html');
+})
+
+app.get("/login",(req,res)=>{
+    res.render("login.html");
+});
+
+app.post('/login',{
+    successRedirect:"success.html",
+    failureRedirect:"login.html"
+},function(req,res){
+   var email =req.body.email;
+   var pass = req.body.password;
+
+   var data = {
+      "email":email,
+      "password":pass,
+   }
+   db.collection('UserDetails').findOne(data,function(err, collection){
+   if (err) throw err;
+      console.log("Record Found");
+   });
 })
 
 app.get('/',function(req,res){
