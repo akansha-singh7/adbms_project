@@ -11,14 +11,14 @@ const app = express();
 
 // mongdb cloud connection is here
 mongoose
-  .connect("mongodb://localhost/databaseName", {
+  .connect("mongodb://localhost:27017/UserDetails", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
   })
   .then(() => {
-    console.log("connected to mongodb cloud! :)");
+    console.log("connected to mongodb:)");
   })
   .catch((err) => {
     console.log(err);
@@ -27,7 +27,6 @@ mongoose
 // middlewares
 app.use(express.urlencoded({ extened: true }));
 app.use(express.static("public"));
-app.set("view engine", "ejs");
 
 // cookie session
 app.use(
@@ -44,12 +43,9 @@ app
   .get("/login", (req, res) => {
     res.render("login");
   })
-  .get("/register", (req, res) => {
-    res.render("register");
-  })
-
+ 
   .get("/home", authenticateUser, (req, res) => {
-    res.render("home", { user: req.session.user });
+    res.render("success.html", { user: req.session.user });
   });
 
 // route for handling post requirests
@@ -87,11 +83,11 @@ app
 
     res.redirect("/home");
   })
-  .post("/register", async (req, res) => {
-    const { email, password } = req.body;
+  .post("/sign_up", async (req, res) => {
+    const { name, email, password, phone } = req.body;
 
     // check for missing filds
-    if (!email || !password) {
+    if (!name ||!email || !password || !phone) {
       res.send("Please enter all the fields");
       return;
     }
